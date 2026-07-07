@@ -8,6 +8,10 @@ use app\Http\Controllers\PostController;
 use app\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
+Route::get("/", function() {
+    return view("index");
+});
+
 Route::prefix("/auth")->group(function() {
     Route::post("/login", [UserContoller::class, "login"]);
     Route::post("/register", [UserContoller::class, "register"]);
@@ -25,6 +29,12 @@ Route::prefix("/auth")->group(function() {
     Route::post("/ConfirmEmail", [UserController::class, "setConfirmEmail"])->name("setConfirmEmail");
 
     Route::get("/redirect/google", [GoogleAuthController::class, "redirect"]);
-    Route::get("/callback/google"), [GoogleAuthController::class, "callback"];
-})
+    Route::get("/callback/google", [GoogleAuthController::class, "callback"]);
+});
 
+Route::prefix("/api")->group(function() {
+    Route::prefix("/post")->group(function() {
+        Route::get("/", [PostController::class, "getPost"]);
+        Route::post("/", [Postcontroller::class, "createPost"])->name("createPost");
+    })
+})
