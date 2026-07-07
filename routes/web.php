@@ -33,8 +33,36 @@ Route::prefix("/auth")->group(function() {
 });
 
 Route::prefix("/api")->group(function() {
+
     Route::prefix("/post")->group(function() {
         Route::get("/", [PostController::class, "getPost"]);
-        Route::post("/", [Postcontroller::class, "createPost"])->name("createPost");
-    })
-})
+        Route::post("/", [PostController::class, "createPost"])->middleware("/auth:sanctum");
+        Route::put("/{id}", [PostController::class, "updatePost"]);
+        Route::delete("/{id}", [PostController::class, "deletePost"]);
+        Route::get("/coments", [PostController::class, "getComments"]);
+    });
+
+    Route::prefix("/likes")->group(function() {
+        Route::post("/", [LikeController::class, "createLike"]);
+        Route::delete("/{id}", [LikeController::class, "deleteLike"]);
+    });
+
+    Route::prefix("/comments")->group(function() {
+        Route::post("/", [CommentController::class, "createComment"]);
+        Route::put("/{id}", [CommentController::class, "updateComment"]);
+        Route::delete("/{id}", [CommentController::class, "deleteComment"]);
+    });
+
+    Route::prefix("/follows")->group(function() {
+        Route::get("/", [FollowController::class, "getFollows"]);
+        Route::post("/", [FollowController::class, "createFollows"]);
+        Route::get("/following/{toUser}", [FollowController::class, "getFollow"]);
+        Route::delete("/{id}", [FollowController::class, "deleteFollow"]);
+    });
+
+    Route::prefix("/user")->middleware("/auth:sanctum")->group(function() {
+        Route::post("/avatar", [UserController::class, "setAvatar"]);
+        Route::post("/banner", [UserController::class, "setBanner"]);
+        Route::post("/description", [UserController::class, "setDescription"]);
+    });
+});
